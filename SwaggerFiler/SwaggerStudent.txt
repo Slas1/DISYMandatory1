@@ -1,0 +1,183 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: ITU Mandatory assignment
+  license:
+    name: MIT
+servers:
+  - url: http://itu.com/MicroService
+paths:
+  /students:
+    get:
+      summary: Get all students
+      operationId: getStudentsList
+      tags:
+        - students
+      responses:
+        '200':
+          description: A paged array of students
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Students"
+    post:
+      summary: Create a student
+      operationId: createStudent
+      tags:
+        - students
+      requestBody:
+        description: Student to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: "Student Created"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /students/{studentId}:
+    get: 
+      summary: "Get a student matching the student Id"
+      operationId: "getStudentWithId"
+      tags:
+      - students
+      description: "Returns a Student what matches a id."
+      parameters:
+      - name: "studentId"
+        in: "path"
+        description: "Id of the Student to return"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses: 
+        '200':
+          description: "Student mathing the Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "Delete a student matching the student Id"
+      operationId: "deleteStudentWithId"
+      tags:
+      - students
+      description: "Deletes a Student what matches a id."
+      parameters:
+      - name: "studentId"
+        in: "path"
+        description: "Id of the Student to delete"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses:
+        '200':
+          description: "Deletion Succesfull"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "Updates information for a student that matches the id"
+      operationId: "updateStudent"
+      tags:
+      - students
+      description: "Updates information for a student that matches the id"
+      parameters:
+      - name: "studentId"
+        in: "path"
+        description: "The id to match with a object"
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: "startDate"
+        in: "query"
+        description: "the start date of the student"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: "endDate"
+        in: "query"
+        description: "the end date of the student"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: activeCourses
+        in: "query"
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: "Student updated"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+
+components:
+  schemas:
+    Student:
+      type: object
+      required:
+        - studentId
+        - name
+        - startDate
+        - endDate
+        - activeCourses
+      properties:
+        studentId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        activeCourses:
+          type: array
+          items:
+            type: integer
+            format: int32
+    Students:
+      type: array
+      items:
+        $ref: "#/components/schemas/Student"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

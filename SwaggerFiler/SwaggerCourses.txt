@@ -1,0 +1,202 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: ITU Mandatory assignment
+  license:
+    name: MIT
+servers:
+  - url: http://itu.com/MicroService
+paths:
+  /Courses:
+    get:
+      summary: Get all courses
+      operationId: getCourseList
+      tags:
+        - courses
+      responses:
+        '200':
+          description: A paged array of courses
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Courses"
+    post:
+      summary: Create a course
+      operationId: createCourse
+      tags:
+        - courses
+      requestBody:
+        description: Course to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '200':
+          description: "Course Created"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courses/{courseId}:
+    get: 
+      summary: "Get a course matching the course Id"
+      operationId: "getCourseWithId"
+      tags:
+      - courses
+      description: "Returns a course what matches a id."
+      parameters:
+      - name: "courseId"
+        in: "path"
+        description: "Id of the course to return"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses: 
+        '200':
+          description: "course mathing the Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "Delete a course matching the course Id"
+      operationId: "deleteCourseWithId"
+      tags:
+      - courses
+      description: "Deletes a course what matches a id."
+      parameters:
+      - name: "courseId"
+        in: "path"
+        description: "Id of the course to delete"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses:
+        '200':
+          description: "Deletion Succesfull"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "Updates information for a course that matches the id"
+      operationId: "updateCourse"
+      tags:
+      - courses
+      description: "Updates information for a course that matches the id"
+      parameters:
+      - name: "courseId"
+        in: "path"
+        description: "The id to match with a object"
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: "ects"
+        in: "query"
+        description: "the nominated workpoints for a course"
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: "courseResponsible"
+        in: "query"
+        description: "the teacher responsible for the course"
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: nRatings
+        in: "query"
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: avgRating
+        in: "query"
+        required: false
+        schema:
+          type: number
+          format: float
+      - name: activeStudents
+        in: "query"
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: "Student updated"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Course:
+      type: object
+      required:
+        - courseId
+        - name
+        - ects
+        - courseResponsible
+        - nRatings
+        - avgRating
+        - activeStudents
+      properties:
+        courseId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        ects:
+          type: integer
+          format: int32
+        courseResponsible:
+          type: integer
+          format: int32
+        nRatings:
+          type: integer
+          format: int32
+        avgRating:
+          type: number
+          format: float
+        activeStudents:
+          type: array
+          items: 
+            type: integer
+            format: int32
+    Courses: 
+      type: array
+      items:
+        $ref: "#/components/schemas/Course"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

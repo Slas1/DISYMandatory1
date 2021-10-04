@@ -1,0 +1,186 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: ITU Mandatory assignment
+  license:
+    name: MIT
+servers:
+  - url: http://itu.com/MicroService
+paths:
+  /Teacher:
+    get:
+      summary: Get all Teachers
+      operationId: getTeacherList
+      tags:
+        - teachers
+      responses:
+        '200':
+          description: A paged array of teachers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teachers"
+    post:
+      summary: Create a Teacher
+      operationId: createTeacher
+      tags:
+        - teachers
+      requestBody:
+        description: Teacher to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Teacher'
+      responses:
+        '200':
+          description: "Teacher Created"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /teachers/{teacherId}:
+    get: 
+      summary: "Get a teacher matching the teacher Id"
+      operationId: "getTeacherWithId"
+      tags:
+      - teachers
+      description: "Returns a teacher what matches a id."
+      parameters:
+      - name: "teacherId"
+        in: "path"
+        description: "Id of the teacher to return"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses: 
+        '200':
+          description: "teacher mathing the Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "Delete a teahcer matching the teahcer Id"
+      operationId: "deleteTeacherWithId"
+      tags:
+      - teachers
+      description: "Deletes a teacher what matches a id."
+      parameters:
+      - name: "teacherId"
+        in: "path"
+        description: "Id of the teacher to delete"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses:
+        '200':
+          description: "Deletion Succesfull"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "Updates information for a teacher that matches the id"
+      operationId: "updateTeacher"
+      tags:
+      - teachers
+      description: "Updates information for a teacher that matches the id"
+      parameters:
+      - name: "teacherId"
+        in: "path"
+        description: "The id to match with a object"
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: "name"
+        in: "query"
+        description: "The name of the teacher"
+        required: false
+        schema:
+          type: string
+      - name: nScores
+        in: "query"
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: avgScore
+        in: "query"
+        required: false
+        schema:
+          type: number
+          format: float
+      - name: teachingCourses
+        in: "query"
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: "Student updated"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Teacher:
+      type: object
+      required: 
+        - teacherId
+        - name
+        - nScores
+        - avgScore
+        - teachingCourses
+      properties:
+        teacherId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        nScores:
+          type: integer
+          format: int32
+        avgScore:
+          type: number
+          format: float
+        teachingCourses:
+          type: array
+          items:
+            type: integer
+            format: int32
+    Teachers:
+      type: array
+      items:
+        $ref: "#/components/schemas/Teacher"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
