@@ -10,13 +10,13 @@ import (
 )
 
 type course struct {
-	ID                int32      `json:"courseId"`
-	Name              string     `json:"name"`
-	Ects              int32      `json:"ects"`
-	CourseResponsible *teacher   `json:"courseResponsible"`
-	NRatings          int32      `json:"nRatings"`
-	AvgRatings        float32    `json:"avgRatings"`
-	ActiveStudents    []*student `json:"activeStudents"`
+	ID                int32   `json:"courseId"`
+	Name              string  `json:"name"`
+	Ects              int32   `json:"ects"`
+	CourseResponsible int32   `json:"courseResponsibleId"`
+	NRatings          int32   `json:"nRatings"`
+	AvgRatings        float32 `json:"avgRatings"`
+	ActiveStudents    []int32 `json:"activeStudentsId"`
 }
 
 // getCourses responds with the list of all courses as JSON.
