@@ -1,0 +1,517 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: ITU Mandatory assignment
+  license:
+    name: MIT
+servers:
+  - url: http://itu.com/MicroService
+paths:
+  /students:
+    get:
+      summary: Get all students
+      operationId: getStudentsList
+      tags:
+        - students
+      responses:
+        '200':
+          description: A paged array of students
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Students"
+    post:
+      summary: Create a student
+      operationId: createStudent
+      tags:
+        - students
+      requestBody:
+        description: Student to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: "Student Created"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /students/{studentId}:
+    get: 
+      summary: "Get a student matching the student Id"
+      operationId: "getStudentWithId"
+      tags:
+      - students
+      description: "Returns a Student what matches a id."
+      parameters:
+      - name: "studentId"
+        in: "path"
+        description: "Id of the Student to return"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses: 
+        '200':
+          description: "Student mathing the Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "Delete a student matching the student Id"
+      operationId: "deleteStudentWithId"
+      tags:
+      - students
+      description: "Deletes a Student what matches a id."
+      parameters:
+      - name: "studentId"
+        in: "path"
+        description: "Id of the Student to delete"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses:
+        '200':
+          description: "Deletion Succesfull"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "Updates information for a student that matches the id"
+      operationId: "updateStudent"
+      tags:
+      - students
+      description: "Updates information for a student that matches the id"
+      parameters:
+      - name: "studentId"
+        in: "path"
+        description: "The id to match with a object"
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: "startDate"
+        in: "query"
+        description: "the start date of the student"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: "endDate"
+        in: "query"
+        description: "the end date of the student"
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: activeCourses
+        in: "query"
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: "#/components/schemas/Course"
+      responses:
+        '200':
+          description: "Student updated"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /Courses:
+    get:
+      summary: Get all courses
+      operationId: getCourseList
+      tags:
+        - courses
+      responses:
+        '200':
+          description: A paged array of courses
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Courses"
+    post:
+      summary: Create a course
+      operationId: createCourse
+      tags:
+        - courses
+      requestBody:
+        description: Course to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '200':
+          description: "Course Created"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courses/{courseId}:
+    get: 
+      summary: "Get a course matching the course Id"
+      operationId: "getCourseWithId"
+      tags:
+      - courses
+      description: "Returns a course what matches a id."
+      parameters:
+      - name: "courseId"
+        in: "path"
+        description: "Id of the course to return"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses: 
+        '200':
+          description: "course mathing the Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "Delete a course matching the course Id"
+      operationId: "deleteCourseWithId"
+      tags:
+      - courses
+      description: "Deletes a course what matches a id."
+      parameters:
+      - name: "courseId"
+        in: "path"
+        description: "Id of the course to delete"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses:
+        '200':
+          description: "Deletion Succesfull"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "Updates information for a course that matches the id"
+      operationId: "updateCourse"
+      tags:
+      - courses
+      description: "Updates information for a course that matches the id"
+      parameters:
+      - name: "courseId"
+        in: "path"
+        description: "The id to match with a object"
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: "ects"
+        in: "query"
+        description: "the nominated workpoints for a course"
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: "courseResponsible"
+        in: "query"
+        description: "the teacher responsible for the course"
+        required: false
+        schema:
+          $ref: "#/components/schemas/Teacher"
+      - name: nRatings
+        in: "query"
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: avgRating
+        in: "query"
+        required: false
+        schema:
+          type: number
+          format: float
+      - name: activeStudents
+        in: "query"
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: "#/components/schemas/Student"
+      responses:
+        '200':
+          description: "Student updated"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /Teacher:
+    get:
+      summary: Get all Teachers
+      operationId: getTeacherList
+      tags:
+        - teachers
+      responses:
+        '200':
+          description: A paged array of teachers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+    post:
+      summary: Create a Teacher
+      operationId: createTeacher
+      tags:
+        - teachers
+      requestBody:
+        description: Teacher to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Teacher'
+      responses:
+        '200':
+          description: "Teacher Created"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /teachers/{teacherId}:
+    get: 
+      summary: "Get a teacher matching the teacher Id"
+      operationId: "getTeacherWithId"
+      tags:
+      - teachers
+      description: "Returns a teacher what matches a id."
+      parameters:
+      - name: "teacherId"
+        in: "path"
+        description: "Id of the teacher to return"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses: 
+        '200':
+          description: "teacher mathing the Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: "Delete a teahcer matching the teahcer Id"
+      operationId: "deleteTeacherWithId"
+      tags:
+      - teachers
+      description: "Deletes a teacher what matches a id."
+      parameters:
+      - name: "teacherId"
+        in: "path"
+        description: "Id of the teacher to delete"
+        required: true
+        schema: 
+          type: "integer"
+          format: "int32"
+      responses:
+        '200':
+          description: "Deletion Succesfull"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: "Updates information for a teacher that matches the id"
+      operationId: "updateTeacher"
+      tags:
+      - teachers
+      description: "Updates information for a teacher that matches the id"
+      parameters:
+      - name: "teacherId"
+        in: "path"
+        description: "The id to match with a object"
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: "name"
+        in: "query"
+        description: "The name of the teacher"
+        required: false
+        schema:
+          type: string
+      - name: nScores
+        in: "query"
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: avgScore
+        in: "query"
+        required: false
+        schema:
+          type: number
+          format: float
+      - name: teachingCourses
+        in: "query"
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: "#/components/schemas/Course"
+      responses:
+        '200':
+          description: "Student updated"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Student:
+      type: object
+      required:
+        - studentId
+        - name
+        - startDate
+        - endDate
+        - activeCourses
+      properties:
+        studentId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        activeCourses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Course"
+    Students:
+      type: array
+      items:
+        $ref: "#/components/schemas/Student"
+    Course:
+      type: object
+      required:
+        - courseId
+        - name
+        - ects
+        - courseResponsible
+        - nRatings
+        - avgRating
+        - activeStudents
+      properties:
+        courseId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        ects:
+          type: integer
+          format: int32
+        courseResponsible:
+          $ref: "#/components/schemas/Teacher"
+        nRatings:
+          type: integer
+          format: int32
+        avgRating:
+          type: number
+          format: float
+        activeStudents:
+          type: array
+          items: 
+            $ref: "#/components/schemas/Student"
+    Courses: 
+      type: array
+      items:
+        $ref: "#/components/schemas/Course"
+    Teacher:
+      type: object
+      required: 
+        - teacherId
+        - name
+        - nScores
+        - avgScore
+        - teachingCourses
+      properties:
+        teacherId:
+          type: integer
+          format: int32
+        name:
+          type: string
+        nScores:
+          type: integer
+          format: int32
+        avgScore:
+          type: number
+          format: float
+        teachingCourses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Course"
+    Teachers:
+      type: array
+      items:
+        $ref: "#/components/schemas/Teacher"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
