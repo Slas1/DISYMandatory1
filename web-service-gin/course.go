@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -62,43 +60,45 @@ func updateCourse(c *gin.Context) {
 	var idd = int32(id)
 
 	var newCourse course
+	if err := c.BindJSON(&newCourse); err != nil {
+		return
+	}
+	var oriCour *course
 	for _, a := range courses {
 		if a.ID == idd {
-			newCourse = a
+			oriCour = &a
 		}
 	}
-	name := c.DefaultQuery("name", "")
-	ects := c.DefaultQuery("ects", "")
-	courseResponsible := c.DefaultQuery("courseResponsible", "")
-	nRatings := c.DefaultQuery("nRatings", "")
-	avgRatings := c.DefaultQuery("avgRatings", "")
-	activeStudents := c.DefaultQuery("activeStudents", "")
-
-	if name != "" {
-		newCourse.Name = name
+	if newCourse.Name != "" {
+		oriCour.Name = newCourse.Name
 	}
-	if ects != "" {
-		var standIn int
-		standIn, _ = strconv.Atoi(ects)
-		newCourse.Ects = int32(standIn)
+	if newCourse.Ects != 0 {
+		oriCour.Ects = newCourse.Ects
 	}
-	if courseResponsible != "" {
-		json.Unmarshal([]byte(courseResponsible), &newCourse.CourseResponsible)
+	if newCourse.CourseResponsible != 0 {
+		oriCour.CourseResponsible = newCourse.CourseResponsible
 	}
-	if nRatings != "" {
-		var standIn int
-		standIn, _ = strconv.Atoi(nRatings)
-		newCourse.NRatings = int32(standIn)
+	if newCourse.NRatings != 0 {
+		oriCour.NRatings = newCourse.NRatings
 	}
-	if avgRatings != "" {
-		var standIn float64
-		standIn, _ = strconv.ParseFloat(avgRatings, 64)
-		newCourse.AvgRatings = float32(standIn)
+	if newCourse.AvgRatings != 0 {
+		oriCour.AvgRatings = newCourse.AvgRatings
 	}
-	if activeStudents != "" {
-		json.Unmarshal([]byte(activeStudents), &newCourse.ActiveStudents)
+	if newCourse.ActiveStudents != nil {
+		oriCour.ActiveStudents = newCourse.ActiveStudents
 	}
 
+	var newCourses = make([]course, 0)
+	for _, a := range courses {
+		if a.ID != idd {
+			newCourses = append(newCourses, a)
+		} else {
+			newCourses = append(newCourses, *oriCour)
+		}
+	}
+	courses = newCourses
+
+	c.IndentedJSON(http.StatusOK, newCourse)
 }
 
 func deleteCourse(c *gin.Context) {
@@ -112,8 +112,6 @@ func deleteCourse(c *gin.Context) {
 			newCourses = append(newCourses, a)
 		}
 	}
-	for _, a := range newCourses {
-		fmt.Println(a)
-	}
 	courses = newCourses
+	c.IndentedJSON(http.StatusOK, courses)
 }
